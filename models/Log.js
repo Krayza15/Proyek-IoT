@@ -16,11 +16,14 @@ const logSchema = new mongoose.Schema({
   triggerSource: { 
     type: String, 
     enum: ['SCHEDULED', 'MANUAL'], 
-    default: 'SCHEDULED' 
   },
   durationSeconds: Number
 }, { 
-  timestamps: true,
+  timeseries : {
+    timeField: 'timestamp',
+    metaField: 'logType',
+    granularity: 'seconds'
+  },
   toJSON: {
     transform: function (doc, ret) {
       if (ret.logType === 'TELEMETRY') {
