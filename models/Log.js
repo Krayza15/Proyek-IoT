@@ -19,6 +19,20 @@ const logSchema = new mongoose.Schema({
     default: 'SCHEDULED' 
   },
   durationSeconds: Number
-}, { timestamps: true });
+}, { 
+  timestamps: true,
+  toJSON: {
+    transform: function (doc, ret) {
+      if (ret.logType === 'TELEMETRY') {
+        delete ret.triggerSource;
+        delete ret.durationSeconds;
+      } else if (ret.logType === 'FEEDING_EVENT') {
+        delete ret.distanceCm;
+        delete ret.remainingPct;
+      }
+      return ret;
+    }
+  }
+ });
 
 module.exports = mongoose.model('Log', logSchema);
