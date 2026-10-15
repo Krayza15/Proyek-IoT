@@ -5,6 +5,16 @@ exports.createSchedule = async (req, res) => {
   try {
     const { userId, feedingTime, durationSeconds } = req.body;
 
+    const activeScheduleCount = await Schedule.countDocuments({ userId, isActive: true }); 
+    
+    // Batasi maksimal 3 jadwal aktif 
+    if (activeScheduleCount >= 3) { 
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Batas maksimal 3 jadwal aktif telah tercapai. Hapus jadwal lama terlebih dahulu.' 
+      }); 
+    }
+
     const newSchedule = new Schedule({
       userId,
       feedingTime,
